@@ -23,7 +23,7 @@ local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 320, 0, 240)
 frame.Position = UDim2.new(0.5, -160, 0.5, -120)
 frame.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
-frame.BackgroundTransparency = 0.1
+frame.BackgroundTransparency = 0  -- Sửa thành 0 để nền đặc, không bị xuyên thấu
 frame.BorderSizePixel = 0
 frame.Parent = keyGui
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
@@ -33,6 +33,7 @@ stroke.Color = Color3.fromRGB(0, 255, 65)
 stroke.Thickness = 1.5
 stroke.Parent = frame
 
+-- Header
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 30)
 header.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
@@ -72,6 +73,7 @@ title.TextSize = 12
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
+-- Body
 local body = Instance.new("Frame")
 body.Size = UDim2.new(1, -20, 1, -40)
 body.Position = UDim2.new(0, 10, 0, 35)
@@ -163,6 +165,7 @@ discordBtn.TextSize = 13
 discordBtn.Parent = btnContainer
 Instance.new("UICorner", discordBtn).CornerRadius = UDim.new(0, 4)
 
+-- LOGIC XỬ LÝ
 discordBtn.MouseButton1Click:Connect(function()
     if setclipboard then
         pcall(function() setclipboard(DISCORD_INVITE) end)
