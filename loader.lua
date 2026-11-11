@@ -201,7 +201,7 @@ btnAuth.MouseButton1Click:Connect(function()
             if success then
                 screenGui:Destroy()
             else
-                consoleLog.Text = "> ERROR: Corrupted payload."
+                consoleLog.Text = "> ERROR: Payload lỗi hoặc rỗng!"
                 consoleLog.TextColor3 = Color3.fromRGB(255, 80, 80)
             end
         else
