@@ -1,5 +1,4 @@
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
 local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 local playerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -12,189 +11,106 @@ if typeof(request) == "function" then httpRequest = request
 elseif typeof(http_request) == "function" then httpRequest = http_request
 elseif typeof(syn) == "table" and typeof(syn.request) == "function" then httpRequest = syn.request end
 
-local keyGui = Instance.new("ScreenGui")
-keyGui.Name = "CuTinsLoader"
-keyGui.ResetOnSpawn = false
-keyGui.DisplayOrder = 999999
-keyGui.IgnoreGuiInset = true
-keyGui.Parent = playerGui
+-- Xóa UI cũ nếu có (tránh bị trùng)
+local oldGui = playerGui:FindFirstChild("CuTinsLoader")
+if oldGui then oldGui:Destroy() end
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 320, 0, 240)
-frame.Position = UDim2.new(0.5, -160, 0.5, -120)
-frame.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
-frame.BackgroundTransparency = 0  -- Sửa thành 0 để nền đặc, không bị xuyên thấu
-frame.BorderSizePixel = 0
-frame.Parent = keyGui
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 6)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CuTinsLoader"
+screenGui.ResetOnSpawn = false
+screenGui.DisplayOrder = 99999
+screenGui.Parent = playerGui
 
-local stroke = Instance.new("UIStroke", frame)
-stroke.Color = Color3.fromRGB(0, 255, 65)
-stroke.Thickness = 1.5
-stroke.Parent = frame
+-- 1. KHUNG CHÍNH (Màu đen đặc)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 300, 0, 220)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -110)
+mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+mainFrame.BorderSizePixel = 2
+mainFrame.BorderColor3 = Color3.fromRGB(0, 255, 65)
+mainFrame.Parent = screenGui
 
--- Header
-local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 30)
-header.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-header.BorderSizePixel = 0
-header.Parent = frame
-Instance.new("UICorner", header).CornerRadius = UDim.new(0, 6)
-
-local dotR = Instance.new("Frame")
-dotR.Size = UDim2.new(0, 10, 0, 10)
-dotR.Position = UDim2.new(0, 10, 0.5, -5)
-dotR.BackgroundColor3 = Color3.fromRGB(255, 95, 86)
-dotR.Parent = header
-Instance.new("UICorner", dotR).CornerRadius = UDim.new(1, 0)
-
-local dotY = Instance.new("Frame")
-dotY.Size = UDim2.new(0, 10, 0, 10)
-dotY.Position = UDim2.new(0, 25, 0.5, -5)
-dotY.BackgroundColor3 = Color3.fromRGB(255, 189, 46)
-dotY.Parent = header
-Instance.new("UICorner", dotY).CornerRadius = UDim.new(1, 0)
-
-local dotG = Instance.new("Frame")
-dotG.Size = UDim2.new(0, 10, 0, 10)
-dotG.Position = UDim2.new(0, 40, 0.5, -5)
-dotG.BackgroundColor3 = Color3.fromRGB(39, 201, 63)
-dotG.Parent = header
-Instance.new("UICorner", dotG).CornerRadius = UDim.new(1, 0)
-
+-- 2. TIÊU ĐỀ
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -60, 1, 0)
-title.Position = UDim2.new(0, 55, 0, 0)
-title.BackgroundTransparency = 1
-title.Text = "root@cutins: ~/auth"
-title.TextColor = Color3.fromRGB(150, 150, 150)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundColor3 = Color3.fromRGB(0, 255, 65)
+title.Text = " CUTINS HACK - AUTH"
+title.TextColor3 = Color3.fromRGB(0, 0, 0)
 title.Font = Enum.Font.Code
-title.TextSize = 12
+title.TextSize = 14
 title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = header
+title.Parent = mainFrame
 
--- Body
-local body = Instance.new("Frame")
-body.Size = UDim2.new(1, -20, 1, -40)
-body.Position = UDim2.new(0, 10, 0, 35)
-body.BackgroundTransparency = 1
-body.Parent = frame
+-- 3. Ô NHẬP KEY
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(0.9, 0, 0, 35)
+textBox.Position = UDim2.new(0.05, 0, 0, 50)
+textBox.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+textBox.TextColor3 = Color3.fromRGB(0, 255, 65)
+textBox.PlaceholderText = "Dán Key vào đây..."
+textBox.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
+textBox.Font = Enum.Font.Code
+textBox.TextSize = 14
+textBox.ClearTextOnFocus = false
+textBox.Parent = mainFrame
 
-local prompt = Instance.new("TextLabel")
-prompt.Size = UDim2.new(1, 0, 0, 20)
-prompt.BackgroundTransparency = 1
-prompt.Text = "> Enter license key to continue..."
-prompt.TextColor = Color3.fromRGB(0, 255, 65)
-prompt.Font = Enum.Font.Code
-prompt.TextSize = 13
-prompt.TextXAlignment = Enum.TextXAlignment.Left
-prompt.Parent = body
+-- 4. NÚT XÁC NHẬN (To, màu xanh)
+local btnAuth = Instance.new("TextButton")
+btnAuth.Size = UDim2.new(0.9, 0, 0, 40)
+btnAuth.Position = UDim2.new(0.05, 0, 0, 100)
+btnAuth.BackgroundColor3 = Color3.fromRGB(0, 255, 65)
+btnAuth.Text = "AUTHENTICATE"
+btnAuth.TextColor3 = Color3.fromRGB(0, 0, 0)
+btnAuth.Font = Enum.Font.GothamBold
+btnAuth.TextSize = 16
+btnAuth.Parent = mainFrame
 
-local inputFrame = Instance.new("Frame")
-inputFrame.Size = UDim2.new(1, 0, 0, 35)
-inputFrame.Position = UDim2.new(0, 0, 0, 25)
-inputFrame.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
-inputFrame.Parent = body
-Instance.new("UICorner", inputFrame).CornerRadius = UDim.new(0, 4)
-local inStroke = Instance.new("UIStroke", inputFrame)
-inStroke.Color = Color3.fromRGB(50, 50, 50)
+-- 5. NÚT DISCORD
+local btnDiscord = Instance.new("TextButton")
+btnDiscord.Size = UDim2.new(0.9, 0, 0, 30)
+btnDiscord.Position = UDim2.new(0.05, 0, 0, 160)
+btnDiscord.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+btnDiscord.Text = "JOIN DISCORD"
+btnDiscord.TextColor3 = Color3.fromRGB(255, 255, 255)
+btnDiscord.Font = Enum.Font.GothamBold
+btnDiscord.TextSize = 14
+btnDiscord.Parent = mainFrame
 
-local input = Instance.new("TextBox")
-input.Size = UDim2.new(1, -20, 1, 0)
-input.Position = UDim2.new(0, 10, 0, 0)
-input.BackgroundTransparency = 1
-input.PlaceholderText = "CUTINS-XXXX-XXXX-XXXX"
-input.Text = ""
-input.TextColor3 = Color3.fromRGB(255, 255, 255)
-input.PlaceholderColor3 = Color3.fromRGB(100, 100, 100)
-input.Font = Enum.Font.Code
-input.TextSize = 14
-input.TextXAlignment = Enum.TextXAlignment.Left
-input.ClearTextOnFocus = false
-input.Parent = inputFrame
-
+-- 6. DÒNG TRẠNG THÁI
 local statusLbl = Instance.new("TextLabel")
-statusLbl.Size = UDim2.new(1, 0, 0, 20)
-statusLbl.Position = UDim2.new(0, 0, 0, 65)
+statusLbl.Size = UDim2.new(0.9, 0, 0, 20)
+statusLbl.Position = UDim2.new(0.05, 0, 0, 195)
 statusLbl.BackgroundTransparency = 1
-statusLbl.Text = ""
-statusLbl.TextColor3 = Color3.fromRGB(255, 200, 0)
+statusLbl.Text = "> Waiting for Key..."
+statusLbl.TextColor3 = Color3.fromRGB(200, 200, 200)
 statusLbl.Font = Enum.Font.Code
 statusLbl.TextSize = 12
 statusLbl.TextXAlignment = Enum.TextXAlignment.Left
-statusLbl.Parent = body
+statusLbl.Parent = mainFrame
 
-local progressBg = Instance.new("Frame")
-progressBg.Size = UDim2.new(1, 0, 0, 6)
-progressBg.Position = UDim2.new(0, 0, 0, 90)
-progressBg.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-progressBg.Visible = false
-progressBg.Parent = body
-Instance.new("UICorner", progressBg).CornerRadius = UDim.new(1, 0)
+-- ==========================================
+-- CHỨC NĂNG NÚT BẤM
+-- ==========================================
 
-local progressFill = Instance.new("Frame")
-progressFill.Size = UDim2.new(0, 0, 1, 0)
-progressFill.BackgroundColor3 = Color3.fromRGB(0, 255, 65)
-progressFill.Parent = progressBg
-Instance.new("UICorner", progressFill).CornerRadius = UDim.new(1, 0)
-
-local btnContainer = Instance.new("Frame")
-btnContainer.Size = UDim2.new(1, 0, 0, 35)
-btnContainer.Position = UDim2.new(0, 0, 1, -40)
-btnContainer.BackgroundTransparency = 1
-btnContainer.Parent = body
-
-local submit = Instance.new("TextButton")
-submit.Size = UDim2.new(0.6, -5, 1, 0)
-submit.BackgroundColor3 = Color3.fromRGB(0, 255, 65)
-submit.Text = "[ AUTHENTICATE ]"
-submit.TextColor3 = Color3.fromRGB(10, 10, 12)
-submit.Font = Enum.Font.Code
-submit.TextSize = 13
-submit.Parent = btnContainer
-Instance.new("UICorner", submit).CornerRadius = UDim.new(0, 4)
-
-local discordBtn = Instance.new("TextButton")
-discordBtn.Size = UDim2.new(0.4, -5, 1, 0)
-discordBtn.Position = UDim2.new(0.6, 5, 0, 0)
-discordBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
-discordBtn.Text = "DISCORD"
-discordBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
-discordBtn.Font = Enum.Font.Code
-discordBtn.TextSize = 13
-discordBtn.Parent = btnContainer
-Instance.new("UICorner", discordBtn).CornerRadius = UDim.new(0, 4)
-
--- LOGIC XỬ LÝ
-discordBtn.MouseButton1Click:Connect(function()
+btnDiscord.MouseButton1Click:Connect(function()
     if setclipboard then
         pcall(function() setclipboard(DISCORD_INVITE) end)
-        statusLbl.Text = "> Link Discord copied."
-        statusLbl.TextColor3 = Color3.fromRGB(0, 200, 255)
+        statusLbl.Text = "> Đã copy link Discord!"
     else
-        statusLbl.Text = "> Join: " .. DISCORD_INVITE
-        statusLbl.TextColor3 = Color3.fromRGB(0, 200, 255)
+        statusLbl.Text = "> Link: " .. DISCORD_INVITE
     end
 end)
 
-submit.MouseButton1Click:Connect(function()
-    local key = input.Text
+btnAuth.MouseButton1Click:Connect(function()
+    local key = textBox.Text
     if key == "" then
-        statusLbl.Text = "> ERROR: Key cannot be empty."
-        statusLbl.TextColor3 = Color3.fromRGB(255, 80, 80)
+        statusLbl.Text = "> Lỗi: Chưa nhập Key!"
         return
     end
 
-    submit.Text = "[ CHECKING... ]"
-    submit.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
-    statusLbl.Text = "> Downloading secure payload..."
-    statusLbl.TextColor3 = Color3.fromRGB(255, 200, 0)
-    progressBg.Visible = true
-    
-    for i = 1, 10 do
-        progressFill.Size = UDim2.new(i / 10, 0, 1, 0)
-        task.wait(0.05)
-    end
+    btnAuth.Text = "CHECKING..."
+    btnAuth.BackgroundColor3 = Color3.fromRGB(255, 200, 0)
+    statusLbl.Text = "> Đang xác thực..."
 
     task.spawn(function()
         local url = string.format("%s/get_script_payload?key=%s", API_URL, HttpService:UrlEncode(key))
@@ -203,32 +119,23 @@ submit.MouseButton1Click:Connect(function()
         end)
         
         if ok and res and res.Body and res.StatusCode == 200 then
-            statusLbl.Text = "> ACCESS GRANTED. Loading hub..."
+            statusLbl.Text = "> Thành công! Đang tải Hub..."
             statusLbl.TextColor3 = Color3.fromRGB(0, 255, 65)
-            progressFill.BackgroundColor3 = Color3.fromRGB(0, 255, 65)
             task.wait(0.5)
             
-            local success, err = pcall(function()
+            local success = pcall(function()
                 loadstring(res.Body)()
             end)
             
             if success then
-                keyGui:Destroy()
+                screenGui:Destroy()
             else
-                statusLbl.Text = "> ERROR: Corrupted payload."
-                statusLbl.TextColor3 = Color3.fromRGB(255, 80, 80)
+                statusLbl.Text = "> Lỗi: Code bị hỏng!"
             end
         else
-            statusLbl.Text = "> ERROR: Invalid or expired key."
-            statusLbl.TextColor3 = Color3.fromRGB(255, 80, 80)
-            submit.Text = "[ AUTHENTICATE ]"
-            submit.BackgroundColor3 = Color3.fromRGB(0, 255, 65)
-            
-            progressFill.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-            progressFill.Size = UDim2.new(1, 0, 1, 0)
-            task.wait(1)
-            progressBg.Visible = false
-            progressFill.Size = UDim2.new(0, 0, 1, 0)
+            statusLbl.Text = "> Lỗi: Key sai hoặc hết hạn!"
+            btnAuth.Text = "AUTHENTICATE"
+            btnAuth.BackgroundColor3 = Color3.fromRGB(0, 255, 65)
         end
     end)
 end)
