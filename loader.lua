@@ -11,9 +11,13 @@ if typeof(request) == "function" then httpRequest = request
 elseif typeof(http_request) == "function" then httpRequest = http_request
 elseif typeof(syn) == "table" and typeof(syn.request) == "function" then httpRequest = syn.request end
 
+-- Dọn dẹp UI cũ nếu có
 local oldGui = playerGui:FindFirstChild("CuTinsLoader")
 if oldGui then oldGui:Destroy() end
 
+-- ==========================================
+-- GIAO DIỆN HACKER TERMINAL
+-- ==========================================
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "CuTinsLoader"
 screenGui.ResetOnSpawn = false
@@ -21,6 +25,7 @@ screenGui.DisplayOrder = 99999
 screenGui.IgnoreGuiInset = true
 screenGui.Parent = playerGui
 
+-- Khung chính
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 320, 0, 230)
 mainFrame.Position = UDim2.new(0.5, -160, 0.5, -115)
@@ -29,6 +34,7 @@ mainFrame.BorderSizePixel = 1
 mainFrame.BorderColor3 = Color3.fromRGB(0, 255, 65)
 mainFrame.Parent = screenGui
 
+-- Thanh tiêu đề Terminal
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1, 0, 0, 25)
 titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
@@ -37,7 +43,7 @@ titleBar.Parent = mainFrame
 
 local titleText = Instance.new("TextLabel")
 titleText.Size = UDim2.new(1, -60, 1, 0)
-titleText.Position = UDim2.new(0, 55, 0, 0) -- Đã sửa lỗi đè chữ
+titleText.Position = UDim2.new(0, 55, 0, 0)
 titleText.BackgroundTransparency = 1
 titleText.Text = "root@cutins:~# ./auth.sh"
 titleText.TextColor3 = Color3.fromRGB(150, 150, 150)
@@ -46,6 +52,7 @@ titleText.TextSize = 12
 titleText.TextXAlignment = Enum.TextXAlignment.Left
 titleText.Parent = titleBar
 
+-- Các nút tròn đỏ/vàng/xanh (Mac Style)
 local function makeDot(posX, color)
     local dot = Instance.new("Frame")
     dot.Size = UDim2.new(0, 8, 0, 8)
@@ -58,6 +65,7 @@ makeDot(10, Color3.fromRGB(255, 95, 86))
 makeDot(25, Color3.fromRGB(255, 189, 46))
 makeDot(40, Color3.fromRGB(39, 201, 63))
 
+-- Dòng log giả lập
 local consoleLog = Instance.new("TextLabel")
 consoleLog.Size = UDim2.new(1, -20, 0, 40)
 consoleLog.Position = UDim2.new(0, 10, 0, 35)
@@ -70,6 +78,7 @@ consoleLog.TextXAlignment = Enum.TextXAlignment.Left
 consoleLog.TextYAlignment = Enum.TextYAlignment.Top
 consoleLog.Parent = mainFrame
 
+-- Khung nhập Key
 local inputFrame = Instance.new("Frame")
 inputFrame.Size = UDim2.new(1, -20, 0, 35)
 inputFrame.Position = UDim2.new(0, 10, 0, 80)
@@ -102,6 +111,7 @@ textBox.TextXAlignment = Enum.TextXAlignment.Left
 textBox.ClearTextOnFocus = false
 textBox.Parent = inputFrame
 
+-- Thanh tiến trình (Progress Bar)
 local progressBg = Instance.new("Frame")
 progressBg.Size = UDim2.new(1, -20, 0, 6)
 progressBg.Position = UDim2.new(0, 10, 0, 130)
@@ -114,6 +124,7 @@ progressFill.Size = UDim2.new(0, 0, 1, 0)
 progressFill.BackgroundColor3 = Color3.fromRGB(0, 255, 65)
 progressFill.Parent = progressBg
 
+-- Khu vực chứa 2 nút
 local btnContainer = Instance.new("Frame")
 btnContainer.Size = UDim2.new(1, -20, 0, 35)
 btnContainer.Position = UDim2.new(0, 10, 1, -45)
@@ -139,6 +150,9 @@ btnDiscord.Font = Enum.Font.Code
 btnDiscord.TextSize = 13
 btnDiscord.Parent = btnContainer
 
+-- ==========================================
+-- CHỨC NĂNG
+-- ==========================================
 btnDiscord.MouseButton1Click:Connect(function()
     if setclipboard then
         pcall(function() setclipboard(DISCORD_INVITE) end)
